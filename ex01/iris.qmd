@@ -1,2 +1,32 @@
 ```{python}
+import numpy as np
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+```
+
+```{python}
+iris = datasets.load_iris()
+```
+
+```{python}
+X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, test_size=0.3)
+```
+
+```{python}
+clf = MLPClassifier(hidden_layer_sizes=(10,), max_iter=1500)
+```
+
+```{python}
+clf.fit(X_train, y_train)
+```
+
+```{python}
+score = clf.score(X_test, y_test)
+score
+```
+
+```{python}
+predictions = clf.predict(X_test)
+predictions
 ```

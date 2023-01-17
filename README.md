@@ -12,3 +12,7 @@
 - Corona Chest: [Dropbox](https://www.dropbox.com/s/zmo4c6pzwcgd9c4/Coronahack-Chest-Xray-Dataset.zip)
 
 - Skin Cancer: [Dropbox](https://www.dropbox.com/s/8o4ysiccspp46ov/skin-cancer-mnist-ham10000.zip?dl=0)
+
+## QMD
+
+Para usar os arquivos `.qmd` instale a extensão [Quarto](https://marketplace.visualstudio.com/items?itemName=quarto.quarto) no seu VSCODE ou procure o equivalente no [Site Oficial](https://quarto.org/docs)

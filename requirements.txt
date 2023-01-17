@@ -3,3 +3,4 @@ numpy==1.22
 matplotlib==3.6.3
 keras==2.11
 pandas==1.5.2
+ipykernel==6.19.2
