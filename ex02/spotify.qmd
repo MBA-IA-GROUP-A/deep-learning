@@ -1,0 +1,39 @@
+---
+jupyter: python3
+---
+
+```{python}
+import pandas as pd
+import numpy as np
+```
+
+```{python}
+data = pd.read_csv("../data/spotify.csv")
+```
+
+```{python}
+data.describe()
+```
+
+```{python}
+data.head()
+```
+
+```{python}
+data.info()
+```
+
+```{python}
+# TODO: 
+# Utilizando o dataset do Spotify (disponível no repositório de apostilas da disciplina) construa um modelo sequencial ou funcional no Keras para
+# fazer a classificação desse dataset.
+# Dicas:
+# Tente calibrar a quantidade de camadas e neurônios a fim de atingir uma
+# acurácia superior a 74%;
+# Tente utilizar ó dropout a fim de evitar eventual overfitting.
+# • Aplique os pré-processamentos necessários.
+# • Apresente a evolução do conjunto de treino e validação.
+# • Apresente a acurácia do conjunto de testes.
+# • Apresente a configuração (estrutura) da rede neural.
+```
+

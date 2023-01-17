@@ -169,6 +169,7 @@ Avaliar e imprimir a precisão do teste
 ```{python}
 score = model.evaluate(x_test, y_test, verbose=0)
 print('\n', 'Test accuracy:', score[1])
+## TODO: Accuracy target: 0.75
 ```
 
 ### 9. Visualizar algumas predições
