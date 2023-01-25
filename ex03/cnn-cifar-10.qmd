@@ -9,7 +9,7 @@ from keras.datasets import cifar10
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import Sequential,load_model
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, AveragePooling2D
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, AveragePooling2D, BatchNormalization
 from keras.utils import np_utils
 from keras.utils.vis_utils import plot_model
 from keras.utils.np_utils import  to_categorical
@@ -103,18 +103,29 @@ print(x_valid.shape[0], 'validation samples')
 
 ```{python}
 model = Sequential()
-model.add(Conv2D(filters=32, kernel_size=3,  activation='relu', input_shape=(32, 32, 3)))                        
-#model.add(Conv2D(32, (3,3)),  activation='relu', input_shape=(32, 32, 3)))                        
-
-model.add(MaxPooling2D(pool_size=2))
+model.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=x_train.shape[1:]))
+model.add(BatchNormalization())
+model.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(MaxPooling2D((2, 2)))
 model.add(Dropout(0.2))
-
+model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(MaxPooling2D((2, 2)))
+model.add(Dropout(0.3))
+model.add(Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(MaxPooling2D((2, 2)))
+model.add(Dropout(0.4))
 model.add(Flatten())
-model.add(Dense(32, activation='sigmoid'))
-model.add(Dropout(0.2))
-model.add(Dense(16, activation='sigmoid'))
-model.add(Dropout(0.2))
-model.add(Dense(num_classes, activation='softmax'))
+model.add(Dense(128, activation='relu', kernel_initializer='he_uniform'))
+model.add(BatchNormalization())
+model.add(Dropout(0.5))
+model.add(Dense(10, activation='softmax'))
 ```
 
 Tentem executar a rede configurando outras funções de ativação (como visto em nossa Aula 3)
@@ -169,7 +180,6 @@ Avaliar e imprimir a precisão do teste
 ```{python}
 score = model.evaluate(x_test, y_test, verbose=0)
 print('\n', 'Test accuracy:', score[1])
-## TODO: Accuracy target: 0.75
 ```
 
 ### 9. Visualizar algumas predições
@@ -218,6 +228,5 @@ for i, idx in enumerate(np.random.choice(x_test.shape[0], size=32, replace=False
     true_idx = np.argmax(y_test[idx])
     ax.set_title("{} ({})".format(cifar10_labels[pred_idx], cifar10_labels[true_idx]),
                  color=("green" if pred_idx == true_idx else "red"))
-    # amostras corretamente classificadas em verde, incorretamente classificadas em vermelho
 ```
 

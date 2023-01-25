@@ -15,4 +15,4 @@
 
 ## QMD
 
-Para usar os arquivos `.qmd` instale a extensão [Quarto](https://marketplace.visualstudio.com/items?itemName=quarto.quarto) no seu VSCODE ou procure o equivalente no [Site Oficial](https://quarto.org/docs)
+Para usar os arquivos `.qmd` instale a extensão [Quarto](https://marketplace.visualstudio.com/items?itemName=quarto.quarto) no seu VSCODE ou procure o equivalente no [Site Oficial](https://quarto.org/docs/guide/)
