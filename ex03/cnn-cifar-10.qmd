@@ -132,7 +132,7 @@ Tentem executar a rede configurando outras funções de ativação (como visto e
 mais informações em https://keras.io/activations/
 
 ```{python}
-plot_model(model, to_file='cnn-CIFAR10.png', show_shapes=True, show_layer_names=True)
+plot_model(model, to_file='cnn-cifar-10.png', show_shapes=True, show_layer_names=True)
 ```
 
 ### 6. Compilando o modelo
