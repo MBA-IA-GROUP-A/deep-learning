@@ -19,6 +19,10 @@ fazer a classificação desse dataset.
 ```{python}
 import pandas as pd
 import numpy as np
+from sklearn.model_selection import train_test_split
+from keras.utils.vis_utils import plot_model
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, AveragePooling2D
 ```
 
 ```{python}
@@ -38,6 +42,53 @@ data.info()
 ```
 
 ```{python}
-# TODO
+X = data.drop(["target", "song_title", "artist", "id"], axis=1)
+y = data["target"]
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 ```
+
+```{python}
+(x_train, x_valid) = x_train[1017:], x_train[:1017]
+(y_train, y_valid) = y_train[1017:], y_train[:1017]
+```
+
+```{python}
+x_train.shape
+```
+
+```{python}
+x_test.shape
+```
+
+```{python}
+model = Sequential()
+model.add(Dense(128, input_shape=(x_train.shape[1:]), activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(16, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Flatten())
+model.add(Dense(128, activation='sigmoid'))
+model.add(Dense(1, activation='sigmoid'))
+```
+
+```{python}
+plot_model(model, to_file='spotify.png', show_shapes=True, show_layer_names=True)
+```
+
+```{python}
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+```
+
+```{python}
+model.fit(x_train, y_train, batch_size=100, epochs=10, validation_data=(x_valid, y_valid), verbose=1, shuffle=True)
+```
+
+```{python}
+score = model.evaluate(X_test, y_test, batch_size=32)
+print("Test loss: ", score[0])
+print("Test accuracy: ", score[1])
+```
+
 

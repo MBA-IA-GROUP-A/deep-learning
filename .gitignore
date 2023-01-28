@@ -1,2 +1,3 @@
 *.Identifier
 **/*.hdf5
+**/*.png
