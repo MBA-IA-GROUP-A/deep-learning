@@ -22,7 +22,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from keras.utils.vis_utils import plot_model
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, AveragePooling2D, BatchNormalization, Activation
+from keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout, AveragePooling1D, BatchNormalization, Activation, GlobalMaxPooling1D
 import matplotlib.pyplot as plt
 ```
 
@@ -45,12 +45,7 @@ data.info()
 ```{python}
 X = data.drop(["target", "song_title", "artist", "id"], axis=1)
 y = data["target"]
-x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-```
-
-```{python}
-(x_train, x_valid) = x_train.iloc[1017:], x_train.iloc[:1017]
-(y_train, y_valid) = y_train.iloc[1017:], y_train.iloc[:1017]
+x_train, x_test, y_train, y_test = train_test_split(X.values, y.values, test_size=0.2)
 ```
 
 ```{python}
@@ -62,21 +57,17 @@ x_test.shape
 ```
 
 ```{python}
-model = Sequential()
-model.add(Dense(64, input_shape=(x_train.shape[1],), kernel_initializer='he_normal'))
-model.add(BatchNormalization())
-model.add(Activation('relu'))
-model.add(Dropout(0.2))
-model.add(Dense(32, kernel_initializer='he_normal'))
-model.add(BatchNormalization())
-model.add(Activation('relu'))
-model.add(Dropout(0.2))
-model.add(Dense(16, kernel_initializer='he_normal'))
-model.add(BatchNormalization())
-model.add(Activation('relu'))
-model.add(Dropout(0.3))
+(x_train, x_valid) = x_train[1500:], x_train[:1500]
+(y_train, y_valid) = y_train[1500:], y_train[:1500]
+```
 
+```{python}
+model = Sequential()
+model.add(Dense(128,input_dim=x_test.shape[1],activation='relu'))
+model.add(Dense(128, activation='relu'))
+model.add(Dense(64, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
+#TODO: Adjust the model to get better results
 ```
 
 ```{python}
@@ -88,7 +79,7 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 ```
 
 ```{python}
-result = model.fit(x_train, y_train, batch_size=32, epochs=50, validation_data=(x_valid, y_valid), verbose=1, shuffle=True)
+result = model.fit(x_train, y_train, batch_size=32, epochs=50, validation_data=(x_valid, y_valid), verbose=1)
 ```
 
 ```{python}
