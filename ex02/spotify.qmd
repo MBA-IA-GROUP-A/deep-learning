@@ -22,7 +22,8 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from keras.utils.vis_utils import plot_model
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, AveragePooling2D
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, AveragePooling2D, BatchNormalization, Activation
+import matplotlib.pyplot as plt
 ```
 
 ```{python}
@@ -48,8 +49,8 @@ x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 ```
 
 ```{python}
-(x_train, x_valid) = x_train[1017:], x_train[:1017]
-(y_train, y_valid) = y_train[1017:], y_train[:1017]
+(x_train, x_valid) = x_train.iloc[1017:], x_train.iloc[:1017]
+(y_train, y_valid) = y_train.iloc[1017:], y_train.iloc[:1017]
 ```
 
 ```{python}
@@ -62,14 +63,19 @@ x_test.shape
 
 ```{python}
 model = Sequential()
-model.add(Dense(128, input_shape=(x_train.shape[1:]), activation='relu'))
-model.add(Dense(64, activation='relu'))
+model.add(Dense(64, input_shape=(x_train.shape[1],), kernel_initializer='he_normal'))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
 model.add(Dropout(0.2))
-model.add(Dense(32, activation='relu'))
-model.add(Dense(16, activation='relu'))
+model.add(Dense(32, kernel_initializer='he_normal'))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
 model.add(Dropout(0.2))
-model.add(Flatten())
-model.add(Dense(128, activation='sigmoid'))
+model.add(Dense(16, kernel_initializer='he_normal'))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
+
 model.add(Dense(1, activation='sigmoid'))
 ```
 
@@ -82,13 +88,24 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 ```
 
 ```{python}
-model.fit(x_train, y_train, batch_size=100, epochs=10, validation_data=(x_valid, y_valid), verbose=1, shuffle=True)
+result = model.fit(x_train, y_train, batch_size=32, epochs=50, validation_data=(x_valid, y_valid), verbose=1, shuffle=True)
 ```
 
 ```{python}
-score = model.evaluate(X_test, y_test, batch_size=32)
+score = model.evaluate(x_test, y_test, batch_size=32)
 print("Test loss: ", score[0])
 print("Test accuracy: ", score[1])
+# TODO: accuracy major than 75%
 ```
 
+```{python}
+plt.figure(1)
+plt.plot(result.history['accuracy'])
+plt.plot(result.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'validation'], loc='upper left')
+plt.show()
+```
 
