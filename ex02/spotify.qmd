@@ -90,11 +90,11 @@ model.compile(optimizer=opt, loss='sparse_categorical_crossentropy', metrics=['a
 ```
 
 ```{python}
-result = model.fit(final_x, final_y, epochs=40, batch_size=64, validation_data=(x_valid, y_valid), verbose=1, shuffle=False, use_multiprocessing=True)
+result = model.fit(final_x, final_y, epochs=25, batch_size=18, validation_data=(x_valid, y_valid), verbose=1, shuffle=False, use_multiprocessing=True)
 ```
 
 ```{python}
-score = model.evaluate(x_test, y_test, batch_size=64)
+score = model.evaluate(x_test, y_test, batch_size=18)
 print("Test loss: ", score[0])
 print("Test accuracy: ", score[1])
 ```
