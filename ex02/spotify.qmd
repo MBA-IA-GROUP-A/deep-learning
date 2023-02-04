@@ -23,6 +23,10 @@ from keras.utils.vis_utils import plot_model
 from keras.models import Sequential
 from keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout, AveragePooling1D, BatchNormalization, Activation, GlobalMaxPooling1D
 import matplotlib.pyplot as plt
+from sklearn import preprocessing
+from keras import optimizers
+
+np.random.seed(0)
 ```
 
 ```{python}
@@ -42,32 +46,41 @@ data.info()
 ```
 
 ```{python}
+data['danceXacousti']= data['acousticness']*data['danceability']
+```
+
+```{python}
 X = data.drop(["target", "song_title", "artist", "id"], axis=1)
+
+min_max_scaler = preprocessing.MinMaxScaler()
+np_scaled = min_max_scaler.fit_transform(X)
+X_normalized = pd.DataFrame(np_scaled, columns = X.columns)
+
 y = data["target"]
-x_train, x_test, y_train, y_test = train_test_split(X.values, y.values, test_size=0.2)
+x_train, x_test, y_train, y_test = train_test_split(X_normalized.values, y.values, test_size=0.1)
 ```
 
 ```{python}
-x_train.shape
+len(x_train), len(x_test)
 ```
 
 ```{python}
-x_test.shape
-```
-
-```{python}
-(x_train, x_valid) = x_train[1500:], x_train[:1500]
-(y_train, y_valid) = y_train[1500:], y_train[:1500]
+(final_x, x_valid) = x_train[1400:], x_train[:1400]
+(final_y, y_valid) = y_train[1400:], y_train[:1400]
 ```
 
 ```{python}
 model = Sequential()
-model.add(Dense(50, input_dim=x_train.shape[1], activation='relu'))
-model.add(Dense(50, activation='relu'))
-model.add(Dense(50, activation='relu'))
+model.add(Dense(128, input_dim=final_x.shape[1], activation='relu'))
+model.add(Dense(128, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dropout(0.2))
 model.add(Dense(2, activation='softmax'))
-
-#TODO: Adjust the model to get better results
 ```
 
 ```{python}
@@ -75,15 +88,16 @@ plot_model(model, to_file='spotify.png', show_shapes=True, show_layer_names=True
 ```
 
 ```{python}
-model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+opt = optimizers.Adam(learning_rate=0.001)
+model.compile(optimizer=opt, loss='sparse_categorical_crossentropy', metrics=['accuracy'], run_eagerly=True)
 ```
 
 ```{python}
-result = model.fit(x_train, y_train, epochs=10, batch_size=32, validation_data=(x_valid, y_valid), verbose=1)
+result = model.fit(final_x, final_y, epochs=25, batch_size=64, validation_data=(x_valid, y_valid), verbose=1)
 ```
 
 ```{python}
-score = model.evaluate(x_test, y_test, batch_size=32)
+score = model.evaluate(x_test, y_test, batch_size=64)
 print("Test loss: ", score[0])
 print("Test accuracy: ", score[1])
 # TODO: accuracy >= 75%
