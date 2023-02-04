@@ -46,7 +46,7 @@ data.info()
 ```
 
 ```{python}
-data['danceXacousti']= data['acousticness']*data['danceability']
+data['danceXacousti']= data['acousticness'] * data['danceability']
 ```
 
 ```{python}
@@ -57,7 +57,7 @@ np_scaled = min_max_scaler.fit_transform(X)
 X_normalized = pd.DataFrame(np_scaled, columns = X.columns)
 
 y = data["target"]
-x_train, x_test, y_train, y_test = train_test_split(X_normalized.values, y.values, test_size=0.1)
+x_train, x_test, y_train, y_test = train_test_split(X_normalized.values, y.values, test_size=0.1, random_state=5)
 ```
 
 ```{python}
@@ -65,26 +65,23 @@ len(x_train), len(x_test)
 ```
 
 ```{python}
-(final_x, x_valid) = x_train[1400:], x_train[:1400]
-(final_y, y_valid) = y_train[1400:], y_train[:1400]
+percent = 0.1
+amount = int(len(x_train)*percent)
+(final_x, x_valid) = x_train[amount:], x_train[:amount]
+(final_y, y_valid) = y_train[amount:], y_train[:amount]
 ```
 
 ```{python}
 model = Sequential()
-model.add(Dense(128, input_dim=final_x.shape[1], activation='relu'))
-model.add(Dense(128, activation='relu'))
+model.add(Dense(64, input_dim=final_x.shape[1], activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Activation('relu'))
 model.add(Dropout(0.5))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dropout(0.2))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(32, activation='relu'))
-model.add(Dropout(0.2))
+model.add(Dropout(0.5))
 model.add(Dense(2, activation='softmax'))
-```
-
-```{python}
-plot_model(model, to_file='spotify.png', show_shapes=True, show_layer_names=True)
 ```
 
 ```{python}
@@ -93,14 +90,13 @@ model.compile(optimizer=opt, loss='sparse_categorical_crossentropy', metrics=['a
 ```
 
 ```{python}
-result = model.fit(final_x, final_y, epochs=25, batch_size=64, validation_data=(x_valid, y_valid), verbose=1)
+result = model.fit(final_x, final_y, epochs=40, batch_size=64, validation_data=(x_valid, y_valid), verbose=1, shuffle=False, use_multiprocessing=True)
 ```
 
 ```{python}
 score = model.evaluate(x_test, y_test, batch_size=64)
 print("Test loss: ", score[0])
 print("Test accuracy: ", score[1])
-# TODO: accuracy >= 75%
 ```
 
 ```{python}
@@ -112,5 +108,9 @@ plt.ylabel('accuracy')
 plt.xlabel('epoch')
 plt.legend(['train', 'validation'], loc='upper left')
 plt.show()
+```
+
+```{python}
+plot_model(model, to_file='spotify.png', show_shapes=True, show_layer_names=True)
 ```
 
