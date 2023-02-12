@@ -1,4 +1,4 @@
-# Trabalho final de deep learning
+# Trabalho final de Deep Learning
 
 ## Preparação
 

@@ -101,6 +101,8 @@ print(x_valid.shape[0], 'validation samples')
 *   Ultimas camadas do tipo totalmente conectadas de 10 saídas (10 classes de categoria de imagem)
 *   "Dropout" de 0,2-0,3
 
+> Aqui utilizamos quase todas as dicas que o professor deu acima. Não usamos neuronios tão grandes e usamos mais dropout, e o resultado foi bem satisfatório com a acurácia maior que 75%
+
 ```{python}
 model = Sequential()
 model.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=x_train.shape[1:]))
