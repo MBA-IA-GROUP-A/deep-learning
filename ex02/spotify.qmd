@@ -29,6 +29,8 @@ from keras import optimizers
 np.random.seed(0)
 ```
 
+## Obtendo os Dados
+
 ```{python}
 data = pd.read_csv("../data/spotify.csv")
 ```
@@ -45,17 +47,31 @@ data.head()
 data.info()
 ```
 
+## Preparando os dados
+
+### Criando uma feature com varaiveis correlacionadas para melhorar a acuracia do treino
+
 ```{python}
 data['danceXacousti']= data['acousticness'] * data['danceability']
 ```
 
+### Removendo colunas não uteis para o treino
+
 ```{python}
 X = data.drop(["target", "song_title", "artist", "id"], axis=1)
+```
 
+### Fazendo pré processamento de normalização dos dados
+
+```{python}
 min_max_scaler = preprocessing.MinMaxScaler()
 np_scaled = min_max_scaler.fit_transform(X)
 X_normalized = pd.DataFrame(np_scaled, columns = X.columns)
+```
 
+### Separando conjunto de treino e teste
+
+```{python}
 y = data["target"]
 x_train, x_test, y_train, y_test = train_test_split(X_normalized.values, y.values, test_size=0.1, random_state=5)
 ```
@@ -64,12 +80,16 @@ x_train, x_test, y_train, y_test = train_test_split(X_normalized.values, y.value
 len(x_train), len(x_test)
 ```
 
+### Separando conjunto de validação
+
 ```{python}
 percent = 0.1
 amount = int(len(x_train)*percent)
 (final_x, x_valid) = x_train[amount:], x_train[:amount]
 (final_y, y_valid) = y_train[amount:], y_train[:amount]
 ```
+
+## Construindo rede sequencial
 
 ```{python}
 model = Sequential()
@@ -89,9 +109,13 @@ opt = optimizers.Adam(learning_rate=0.001)
 model.compile(optimizer=opt, loss='sparse_categorical_crossentropy', metrics=['accuracy'], run_eagerly=True)
 ```
 
+### Treinando a rede
+
 ```{python}
 result = model.fit(final_x, final_y, epochs=25, batch_size=18, validation_data=(x_valid, y_valid), verbose=1, shuffle=False, use_multiprocessing=True)
 ```
+
+## Métricas de desempenho
 
 ```{python}
 score = model.evaluate(x_test, y_test, batch_size=18)
@@ -109,6 +133,8 @@ plt.xlabel('epoch')
 plt.legend(['train', 'validation'], loc='upper left')
 plt.show()
 ```
+
+## Modelo da rede
 
 ```{python}
 plot_model(model, to_file='spotify.png', show_shapes=True, show_layer_names=True)
