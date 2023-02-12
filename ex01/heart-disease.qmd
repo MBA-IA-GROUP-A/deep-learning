@@ -10,6 +10,8 @@ from sklearn.metrics import classification_report
 import pandas as pd
 ```
 
+## Obtendo os Dados
+
 ```{python}
 data = pd.read_csv("../data/heart_disease_uci.csv")
 ```
@@ -25,6 +27,8 @@ data.head()
 ```{python}
 data.info()
 ```
+
+## Normalizando os dados categoricos para númericos
 
 ```{python}
 data['sex'] = data['sex'].map({ 'Male': 0, 'Female': 1 })
@@ -58,6 +62,8 @@ data['vessels_colored_by_flourosopy'] = data['vessels_colored_by_flourosopy'].ma
 data['thalassemia'] = data['thalassemia'].map({ 'Normal': 0, 'Fixed Defect': 1, 'Reversable Defect': 2, 'No': 3 })
 ```
 
+## Treinando o modelo com o MLP Classifier
+
 ```{python}
 X = data.drop("target", axis=1)
 y = data["target"]
@@ -74,6 +80,8 @@ clf = MLPClassifier(hidden_layer_sizes=(20,20,20), max_iter=1000)
 ```{python}
 clf.fit(X_train, y_train)
 ```
+
+## Métricas de desempenho
 
 ```{python}
 clf.score(X_test, y_test)
